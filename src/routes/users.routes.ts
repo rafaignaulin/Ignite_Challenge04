@@ -7,9 +7,14 @@ import { turnUserAdminController } from "../modules/users/useCases/turnUserAdmin
 
 const usersRoutes = Router();
 
-usersRoutes.post("/", (request, response) =>
-  createUserController.handle(request, response)
-);
+usersRoutes.post("/", (request, response) => {
+  try {
+    const user = createUserController.handle(request, response);
+  } catch (user) {
+    if (!user) response.status(400).json({ message: "Email already exists" });
+  }
+  return response.status(201).json(user);
+});
 
 usersRoutes.patch("/:user_id/admin", (request, response) =>
   turnUserAdminController.handle(request, response)
