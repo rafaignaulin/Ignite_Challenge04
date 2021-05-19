@@ -10,22 +10,46 @@ const usersRoutes = Router();
 usersRoutes.post("/", (request, response) => {
   try {
     const user = createUserController.handle(request, response);
+    return response.status(201).json(user);
   } catch (user) {
-    if (!user) response.status(400).json({ message: "Email already exists" });
+    return response
+      .status(400)
+      .json({ error: "Nao foi possivel criar o usuario" });
   }
-  return response.status(201).json(user);
 });
 
-usersRoutes.patch("/:user_id/admin", (request, response) =>
-  turnUserAdminController.handle(request, response)
-);
+usersRoutes.patch("/:user_id/admin", (request, response) => {
+  try {
+    const user = turnUserAdminController.handle(request, response);
+    return response.status(201).json(user);
+  } catch (user) {
+    return response
+      .status(404)
+      .json({ error: "Nao foi possivel tornar o usuario Administrador." });
+  }
+});
 
-usersRoutes.get("/:user_id", (request, response) =>
-  showUserProfileController.handle(request, response)
-);
+usersRoutes.get("/:user_id", (request, response) => {
+  try {
+    const user = showUserProfileController.handle(request, response);
+    return response.status(200).json(user);
+  } catch (user) {
+    return response
+      .status(404)
+      .json({ error: "Nao foi possivel mostrar este usuario" });
+  }
+});
 
-usersRoutes.get("/", (request, response) =>
-  listAllUsersController.handle(request, response)
-);
+usersRoutes.get("/", (request, response) => {
+  try {
+    const users = listAllUsersController.handle(request, response);
+
+    return response.status(200).json(users);
+  } catch (users) {
+    return response
+      .status(400)
+      .json({ error: "Nao foi possivel listar todos os usuarios" });
+  }
+});
 
 export { usersRoutes };
